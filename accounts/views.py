@@ -125,7 +125,7 @@ def login_view(request):
         else:
             messages.error(request, 'Invalid email or password.')
     
-    return render(request, 'accounts/login.html')
+    return render(request, 'accounts/login_modern.html')
 
 
 @login_required

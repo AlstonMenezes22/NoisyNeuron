@@ -31,6 +31,7 @@ def dashboard_view(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
+    path('social-auth/', include('social_django.urls', namespace='social')),
     path('audio_processor/', include('audio_processor.urls')),
     path('api/audio/', include('audio_processor.urls')),
     path('markov_models/', include('markov_models.urls')),

@@ -24,6 +24,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '*']
 
+# Sites framework settings
+SITE_ID = 1
+
+# Additional social auth settings
+SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS = ['localhost:8000', '127.0.0.1:8000']
+
 
 # Application definition
 
@@ -38,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'channels',
+    'social_django',
     'accounts',
     'audio_processor',
     'markov_models',
@@ -56,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'noisyneuron.urls'
@@ -71,6 +79,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -211,6 +221,50 @@ MAX_AUDIO_DURATION = 600  # 10 minutes in seconds
 
 # Custom user model
 AUTH_USER_MODEL = 'accounts.CustomUser'
+
+# Social Auth Configuration
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.github.GithubOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+# Google OAuth2 credentials
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '677883364163-ls4j14nsijdi58dmeonstk9buo7mqt9i.apps.googleusercontent.com'  # Google Client ID
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'GOCSPX-****Yoyh'  # Google Client Secret
+
+# GitHub OAuth2 credentials
+SOCIAL_AUTH_GITHUB_KEY = 'Ov23liwkejRjIj4dYMY8'  # Github Client ID
+SOCIAL_AUTH_GITHUB_SECRET = '17d261ae18d1d672b49c80c748ac57fc2bfccf56'  # Github Client Secret
+SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']  # Request email access
+
+# Social Auth Settings
+SOCIAL_AUTH_GITHUB_USE_UNICODES = True
+SOCIAL_AUTH_GITHUB_REDIRECT_URI = 'http://localhost:8000/social-auth/complete/github/'
+
+# Social Auth Settings
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'accounts:dashboard'
+SOCIAL_AUTH_LOGIN_URL = 'accounts:login'
+SOCIAL_AUTH_LOGIN_ERROR_URL = 'accounts:login'
+SOCIAL_AUTH_RAISE_EXCEPTIONS = DEBUG
+
+# Social Auth Pipeline
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
+
+SOCIAL_AUTH_LOGIN_URL = 'accounts:login'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'accounts:dashboard'
+SOCIAL_AUTH_LOGIN_ERROR_URL = 'accounts:login'
 
 # Security Settings for Production
 if not DEBUG:
